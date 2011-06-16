@@ -53,11 +53,11 @@ module RailsAdmin
         model = model_name_to_constantize.constantize
       rescue NameError
         if is_first_try
-          model_name_to_constantize = model_name_to_constantize.pluralize
+          model_name_to_constantize = model_name_to_constantize.to_s.pluralize
           is_first_try = false
           retry
         else
-          raise "RailsAdmin could not find model #{model_name} or #{model_name.pluralize}" if raise_error
+          raise "RailsAdmin could not find model #{model_name} or #{model_name.to_s.pluralize}" if raise_error
           return nil
         end
       end
