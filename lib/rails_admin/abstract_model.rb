@@ -47,11 +47,19 @@ module RailsAdmin
 
     # Given a string +model_name+, finds the corresponding model class
     def self.lookup(model_name,raise_error=true)
+      is_first_try = true
+      model_name_to_constantize = model_name
       begin
-        model = model_name.constantize
+        model = model_name_to_constantize.constantize
       rescue NameError
-        raise "RailsAdmin could not find model #{model_name}" if raise_error
-        return nil
+        if is_first_try
+          model_name_to_constantize = model_name_to_constantize.pluralize
+          is_first_try = false
+          retry
+        else
+          raise "RailsAdmin could not find model #{model_name} or #{model_name.pluralize}" if raise_error
+          return nil
+        end
       end
 
       if model.is_a?(Class) && superclasses(model).include?(ActiveRecord::Base)
